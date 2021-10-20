@@ -1,0 +1,22 @@
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 223ae58..f9f83f1 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -1362,7 +1362,7 @@ nobase_include_HEADERS = \
+ 
+ lib_LTLIBRARIES = libprotobuf-lite.la libprotobuf.la libprotoc.la
+ libprotobuf_lite_la_LIBADD = $(PTHREAD_LIBS) $(LIBATOMIC_LIBS)
+-libprotobuf_lite_la_LDFLAGS = -version-info $(PROTOBUF_VERSION) \
++libprotobuf_lite_la_LDFLAGS = -avoid-version $(PROTOBUF_VERSION) \
+ 	-export-dynamic -no-undefined $(am__append_1)
+ @HAVE_LD_VERSION_SCRIPT_TRUE@EXTRA_libprotobuf_lite_la_DEPENDENCIES = libprotobuf-lite.map
+ libprotobuf_lite_la_SOURCES = \
+@@ -1406,7 +1406,7 @@ libprotobuf_lite_la_SOURCES = \
+   google/protobuf/io/zero_copy_stream_impl_lite.cc
+ 
+ libprotobuf_la_LIBADD = $(PTHREAD_LIBS) $(LIBATOMIC_LIBS)
+-libprotobuf_la_LDFLAGS = -version-info $(PROTOBUF_VERSION) \
++libprotobuf_la_LDFLAGS = -avoid-version $(PROTOBUF_VERSION) \
+ 	-export-dynamic -no-undefined $(am__append_2)
+ @HAVE_LD_VERSION_SCRIPT_TRUE@EXTRA_libprotobuf_la_DEPENDENCIES = libprotobuf.map
+ libprotobuf_la_SOURCES = \
