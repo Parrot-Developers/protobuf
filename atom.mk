@@ -152,6 +152,20 @@ else
 $(call register-prebuilt-pkg-config-module,protobuf,protobuf)
 $(call register-prebuilt-pkg-config-module,protobuf-lite,protobuf-lite)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := protobuf-proto-files
+define LOCAL_CMD_BUILD
+	@( \
+		srcdir=$$(dirname $$(which protoc))/../include/google/protobuf; \
+		dstdir=$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf; \
+		mkdir -p $${dstdir}; \
+		for f in any descriptor empty wrappers; do \
+			cp -af $${srcdir}/$${f}.proto $${dstdir}/; \
+		done; \
+	)
+endef
+include $(BUILD_CUSTOM)
+
 endif
 
 ###############################################################################
