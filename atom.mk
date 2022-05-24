@@ -55,7 +55,7 @@ LOCAL_AUTOTOOLS_CONFIGURE_ARGS := \
 	--without-zlib \
 	--with-protoc=$(HOST_OUT_STAGING)/usr/bin/protoc
 
-ifneq (,$(filter $(TARGET_OS)-$(TARGET_OS_FLAVOUR), darwin-iphoneos darwin-iphonesimulator linux-android))
+ifneq (,$(filter $(TARGET_OS)-$(TARGET_OS_FLAVOUR), darwin-iphoneos darwin-iphonesimulator linux-android linux-appzone))
   # Disable compilation of programs, only compile runtime libs
   LOCAL_AUTOTOOLS_MAKE_BUILD_ARGS := \
 	bin_PROGRAMS="" \
