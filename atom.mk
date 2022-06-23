@@ -3,6 +3,9 @@ LOCAL_PATH := $(call my-dir)
 
 ifneq ("$(HOST_OS)","windows")
 
+
+PROTOBUF_VERSION := 3.19.4
+
 ###############################################################################
 # Host part
 ###############################################################################
@@ -11,7 +14,7 @@ include $(CLEAR_VARS)
 
 LOCAL_HOST_MODULE := protobuf
 
-LOCAL_AUTOTOOLS_VERSION := 3.19.4
+LOCAL_AUTOTOOLS_VERSION := $(PROTOBUF_VERSION)
 LOCAL_AUTOTOOLS_ARCHIVE := protobuf-all-$(LOCAL_AUTOTOOLS_VERSION).tar.gz
 LOCAL_AUTOTOOLS_SUBDIR := protobuf-$(LOCAL_AUTOTOOLS_VERSION)
 
@@ -39,7 +42,7 @@ LOCAL_DEPENDS_HOST_MODULES := host.protobuf
 LOCAL_CONFIG_FILES := Config.in
 $(call load-config)
 
-LOCAL_AUTOTOOLS_VERSION := 3.19.4
+LOCAL_AUTOTOOLS_VERSION := $(PROTOBUF_VERSION)
 LOCAL_AUTOTOOLS_ARCHIVE := protobuf-all-$(LOCAL_AUTOTOOLS_VERSION).tar.gz
 LOCAL_AUTOTOOLS_SUBDIR := protobuf-$(LOCAL_AUTOTOOLS_VERSION)
 
@@ -120,7 +123,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := protobuf-python
 LOCAL_DESCRIPTION := Protocol Buffers - Google data interchange format - Python Runtime
 LOCAL_CATEGORY_PATH := libs/protobuf
-LOCAL_AUTOTOOLS_VERSION := 3.19.4
+LOCAL_AUTOTOOLS_VERSION := $(PROTOBUF_VERSION)
 LOCAL_AUTOTOOLS_ARCHIVE := protobuf-all-$(LOCAL_AUTOTOOLS_VERSION).tar.gz
 LOCAL_AUTOTOOLS_SUBDIR := protobuf-$(LOCAL_AUTOTOOLS_VERSION)
 LOCAL_PYTHONPKG_TYPE := setuptools
@@ -137,7 +140,7 @@ include $(CLEAR_VARS)
 LOCAL_HOST_MODULE := protobuf-python
 LOCAL_DESCRIPTION := Protocol Buffers - Google data interchange format - Python Runtime
 LOCAL_CATEGORY_PATH := libs/protobuf
-LOCAL_AUTOTOOLS_VERSION := 3.19.4
+LOCAL_AUTOTOOLS_VERSION := $(PROTOBUF_VERSION)
 LOCAL_AUTOTOOLS_ARCHIVE := protobuf-all-$(LOCAL_AUTOTOOLS_VERSION).tar.gz
 LOCAL_AUTOTOOLS_SUBDIR := protobuf-$(LOCAL_AUTOTOOLS_VERSION)
 LOCAL_PYTHONPKG_TYPE := setuptools
