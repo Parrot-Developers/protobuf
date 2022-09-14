@@ -1,0 +1,12 @@
+diff -ru protobuf-3.19.4-orig/python/google/protobuf/pyext/descriptor.cc protobuf-3.19.4/python/google/protobuf/pyext/descriptor.cc
+--- protobuf-3.19.4-orig/python/google/protobuf/pyext/descriptor.cc	2022-01-28 17:33:11.000000000 +0100
++++ protobuf-3.19.4/python/google/protobuf/pyext/descriptor.cc	2022-09-06 16:31:50.922772529 +0200
+@@ -91,7 +91,7 @@
+ // TODO(amauryfa): Change the proto2 compiler to remove the assignments, and
+ // remove this hack.
+ bool _CalledFromGeneratedFile(int stacklevel) {
+-#ifndef PYPY_VERSION
++#if 0
+   // This check is not critical and is somewhat difficult to implement correctly
+   // in PyPy.
+   PyFrameObject* frame = PyEval_GetFrame();
