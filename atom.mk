@@ -56,7 +56,7 @@ LOCAL_AUTOTOOLS_CONFIGURE_ARGS := \
 	--with-protoc=$(HOST_OUT_STAGING)/usr/bin/protoc
 
 ifneq (,$(filter $(TARGET_OS)-$(TARGET_OS_FLAVOUR), darwin-iphoneos darwin-iphonesimulator linux-android))
-  # Disable compilation of compiler, only compile runtime libs
+  # Disable compilation of programs, only compile runtime libs
   LOCAL_AUTOTOOLS_MAKE_BUILD_ARGS := \
 	bin_PROGRAMS="" \
 	lib_LTLIBRARIES="libprotobuf-lite.la libprotobuf.la"
@@ -65,6 +65,13 @@ ifneq (,$(filter $(TARGET_OS)-$(TARGET_OS_FLAVOUR), darwin-iphoneos darwin-iphon
 	bin_PROGRAMS="" \
 	lib_LTLIBRARIES="libprotobuf-lite.la libprotobuf.la"
 else
+  # Disable compilation of programs, only compile runtime libs (including libprotoc)
+  LOCAL_AUTOTOOLS_MAKE_BUILD_ARGS := \
+	bin_PROGRAMS=""
+
+  LOCAL_AUTOTOOLS_MAKE_INSTALL_ARGS := \
+	bin_PROGRAMS=""
+
   # Export -lprotoc here, where we are sure it's being compiled, instead of downstream
   # meta-packages below
   LOCAL_EXPORT_LDLIBS := -lprotoc
