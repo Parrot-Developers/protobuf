@@ -18,6 +18,8 @@ LOCAL_AUTOTOOLS_VERSION := $(PROTOBUF_VERSION)
 LOCAL_AUTOTOOLS_ARCHIVE := protobuf-all-$(LOCAL_AUTOTOOLS_VERSION).tar.gz
 LOCAL_AUTOTOOLS_SUBDIR := protobuf-$(LOCAL_AUTOTOOLS_VERSION)
 
+LOCAL_AUTOTOOLS_PATCHES := 0003-disable-languages.patch
+
 LOCAL_CFLAGS := -Wno-unused-local-typedefs
 
 LOCAL_AUTOTOOLS_CONFIGURE_ARGS := \
@@ -48,8 +50,9 @@ LOCAL_AUTOTOOLS_SUBDIR := protobuf-$(LOCAL_AUTOTOOLS_VERSION)
 
 # Remove so version for android shared libraries
 ifeq ("$(TARGET_OS_FLAVOUR)","android")
-LOCAL_AUTOTOOLS_PATCHES := 0001-android_avoid_so_version.patch
+LOCAL_AUTOTOOLS_PATCHES += 0001-android_avoid_so_version.patch
 endif
+LOCAL_AUTOTOOLS_PATCHES += 0003-disable-languages.patch
 
 LOCAL_AUTOTOOLS_CONFIGURE_ARGS := \
 	--without-zlib \
