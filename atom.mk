@@ -1,9 +1,6 @@
 
 LOCAL_PATH := $(call my-dir)
 
-ifneq ("$(HOST_OS)","windows")
-
-
 PROTOBUF_VERSION := 3.19.4
 
 ###############################################################################
@@ -161,28 +158,6 @@ LOCAL_PYTHONPKG_ENV := PROTOC=$(HOST_OUT_STAGING)/usr/bin/protoc
 LOCAL_DEPENDS_HOST_MODULES := host.protobuf
 include $(BUILD_PYTHON_PACKAGE)
 
-else
-
-# Use prebuilt version on windows (mingw)
-$(call register-prebuilt-pkg-config-module,protobuf,protobuf)
-$(call register-prebuilt-pkg-config-module,protobuf-lite,protobuf-lite)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := protobuf-proto-files
-define LOCAL_CMD_BUILD
-	@( \
-		srcdir=$$(dirname $$(which protoc))/../include/google/protobuf; \
-		dstdir=$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf; \
-		mkdir -p $${dstdir}; \
-		for f in any descriptor empty wrappers; do \
-			cp -af $${srcdir}/$${f}.proto $${dstdir}/; \
-		done; \
-	)
-endef
-include $(BUILD_CUSTOM)
-
-endif
-
 ###############################################################################
 ## Custom macro that can be used in LOCAL_CUSTOM_MACROS of a module to
 ## create automatically rules to generate files from .proto.
@@ -265,9 +240,7 @@ $$(protoc_done_file): PRIVATE_PROTO_OUT_CP_PROTO := $$(protoc_out_cp_proto)
 $$(protoc_done_file): PRIVATE_PROTO_DEP_FILE := $$(protoc_dep_file)
 $$(protoc_done_file): PRIVATE_PROTO_AUX_FILE := $$(protoc_aux_file)
 
-ifeq ("$(HOST_OS)","windows")
-$$(protoc_done_file): PRIVATE_PROTOC_EXE := protoc
-else ifeq ("$(CONFIG_PROTOBUF_PACKAGE_PROTOC)","y")
+ifeq ("$(CONFIG_PROTOBUF_PACKAGE_PROTOC)","y")
 $$(protoc_done_file): PRIVATE_PROTOC_EXE := $(HOST_OUT_STAGING)/usr/bin/protoc
 else
 $$(protoc_done_file): PRIVATE_PROTOC_EXE := protoc
@@ -356,10 +329,7 @@ $(if $(call is-path-absolute,$2), \
 # Update alchemy variables for the module
 LOCAL_CLEAN_FILES += $$(protoc_done_file) $$(protoc_gen_files) $$(protoc_out_cp_proto) $$(protoc_dep_file)
 LOCAL_EXPORT_PREREQUISITES += $$(protoc_gen_files) $$(protoc_done_file)
-
-ifneq ("$(HOST_OS)","windows")
 LOCAL_DEPENDS_HOST_MODULES += host.protobuf
-endif
 
 endef
 
