@@ -68,22 +68,23 @@ ifneq (,$(filter $(TARGET_OS)-$(TARGET_OS_FLAVOUR), darwin-iphoneos darwin-iphon
 	bin_PROGRAMS="" \
 	lib_LTLIBRARIES="libprotobuf-lite.la libprotobuf.la"
 else
-  # Disable compilation of programs, only compile runtime libs (including libprotoc)
-  LOCAL_AUTOTOOLS_MAKE_BUILD_ARGS := \
+
+  ifneq ("$(TARGET_OS)-$(TARGET_OS_FLAVOUR)","linux-native")
+    # Disable compilation of programs, only compile runtime libs (including libprotoc)
+    LOCAL_AUTOTOOLS_MAKE_BUILD_ARGS := \
 	bin_PROGRAMS=""
 
-  LOCAL_AUTOTOOLS_MAKE_INSTALL_ARGS := \
+    LOCAL_AUTOTOOLS_MAKE_INSTALL_ARGS := \
 	bin_PROGRAMS=""
+  endif
 
   # Export -lprotoc here, where we are sure it's being compiled, instead of downstream
   # meta-packages below
   LOCAL_EXPORT_LDLIBS := -lprotoc
 endif
 
-# Remove compiler from target, create usr/share/protobuf directory
+# Create usr/share/protobuf directory
 define LOCAL_AUTOTOOLS_CMD_POST_INSTALL
-	$(if $(filter-out $(TARGET_OS)-$(TARGET_OS_FLAVOUR), linux-native), \
-		$(Q) rm -f $(TARGET_OUT_STAGING)/usr/bin/protoc)
 	$(Q) mkdir -p $(TARGET_OUT_STAGING)/usr/share/protobuf
 	$(Q) mkdir -p $(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf
 	$(Q) mkdir -p $(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf
