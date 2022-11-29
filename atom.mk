@@ -80,33 +80,27 @@ else
   # meta-packages below
   LOCAL_EXPORT_LDLIBS := -lprotoc
 endif
+LOCAL_EXPORT_FILES := \
+	$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/any.proto \
+	$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/empty.proto \
+	$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/wrappers.proto \
+	$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/descriptor.proto \
+	$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/struct.proto
 
 # Create usr/share/protobuf directory
 define LOCAL_AUTOTOOLS_CMD_POST_INSTALL
 	$(Q) mkdir -p $(TARGET_OUT_STAGING)/usr/share/protobuf
 	$(Q) mkdir -p $(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf
-	$(Q) mkdir -p $(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf
 	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/any.proto \
 		 $(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/any.proto
-	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/any.proto \
-		 $(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf/any.proto
 	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/empty.proto \
 		 $(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/empty.proto
-	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/empty.proto \
-		 $(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf/empty.proto
 	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/wrappers.proto \
 		$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/wrappers.proto
-	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/wrappers.proto \
-		$(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf/wrappers.proto
 	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/descriptor.proto \
 		$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/descriptor.proto
-	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/descriptor.proto \
-		$(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf/descriptor.proto
 	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/struct.proto \
 		$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/struct.proto
-	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/struct.proto \
-		$(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf/struct.proto
-
 endef
 
 include $(BUILD_AUTOTOOLS)
@@ -334,6 +328,7 @@ $(if $(call is-path-absolute,$2), \
 # Update alchemy variables for the module
 LOCAL_CLEAN_FILES += $$(protoc_done_file) $$(protoc_gen_files) $$(protoc_out_cp_proto) $$(protoc_dep_file)
 LOCAL_EXPORT_PREREQUISITES += $$(protoc_gen_files) $$(protoc_done_file)
+LOCAL_DEPENDS_MODULES += protobuf-base
 LOCAL_DEPENDS_HOST_MODULES += host.protobuf
 
 endef
