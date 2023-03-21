@@ -101,6 +101,10 @@ define LOCAL_AUTOTOOLS_CMD_POST_INSTALL
 		$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/descriptor.proto
 	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/descriptor.proto \
 		$(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf/descriptor.proto
+	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/struct.proto \
+		$(TARGET_OUT_STAGING)/usr/share/protobuf/google/protobuf/struct.proto
+	$(Q) cp -af $(TARGET_OUT_STAGING)/usr/include/google/protobuf/struct.proto \
+		$(TARGET_OUT_STAGING)/usr/lib/python/site-packages/google/protobuf/struct.proto
 
 endef
 
