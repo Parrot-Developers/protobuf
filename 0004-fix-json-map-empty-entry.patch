@@ -1,0 +1,131 @@
+diff -ru protobuf-3.19.4-orig/src/google/protobuf/util/internal/protostream_objectsource.cc protobuf-3.19.4/src/google/protobuf/util/internal/protostream_objectsource.cc
+--- protobuf-3.19.4-orig/src/google/protobuf/util/internal/protostream_objectsource.cc
++++ protobuf-3.19.4/src/google/protobuf/util/internal/protostream_objectsource.cc
+@@ -263,6 +263,8 @@
+     stream_->ReadVarint32(&buffer32);  // message length
+     int old_limit = stream_->PushLimit(buffer32);
+     std::string map_key;
++    bool entry_ok = false;
++
+     for (uint32_t tag = stream_->ReadTag(); tag != 0;
+          tag = stream_->ReadTag()) {
+       const google::protobuf::Field* map_entry_field =
+@@ -287,17 +289,104 @@
+           ASSIGN_OR_RETURN(map_key, MapKeyDefaultValueAsString(*key_field));
+         }
+         RETURN_IF_ERROR(RenderField(map_entry_field, map_key, ow));
++        entry_ok = true;
+       } else {
+         // The Type info for this map entry is incorrect. It should contain
+         // exactly two fields with field number 1 and 2.
+         return util::InternalError("Invalid map entry.");
+       }
+     }
++
++    // If no entry added, fill a default key, default value entry
++    if (!entry_ok) {
++      if (map_key.empty()) {
++        // An absent map key is treated as the default.
++        const google::protobuf::Field* key_field =
++            FindFieldByNumber(*field_type, 1);
++        if (key_field == nullptr) {
++          // The Type info for this map entry is incorrect. It should always
++          // have a field named "key" and with field number 1.
++          return util::InternalError("Invalid map entry.");
++        }
++        ASSIGN_OR_RETURN(map_key, MapKeyDefaultValueAsString(*key_field));
++      }
++
++      const google::protobuf::Field* value_field =
++          FindFieldByNumber(*field_type, 2);
++      if (value_field == nullptr) {
++          // The Type info for this map entry is incorrect. It should always
++          // have a field named "value" and with field number 2.
++        return util::InternalError("Invalid map entry.");
++      }
++      RETURN_IF_ERROR(RenderDefaultMapValue(map_key, value_field, ow));
++    }
++
+     stream_->PopLimit(old_limit);
+   } while ((tag_to_return = stream_->ReadTag()) == list_tag);
+   return tag_to_return;
+ }
+ 
++util::Status ProtoStreamObjectSource::RenderDefaultMapValue(
++    const std::string& key,
++    const google::protobuf::Field* value_field,
++    ObjectWriter* ow) const
++{
++  const google::protobuf::Enum* en = nullptr;
++  const google::protobuf::EnumValue* enum_value = nullptr;
++  switch (value_field->kind()) {
++    case google::protobuf::Field::TYPE_BOOL:
++      ow->RenderBool(key, false);
++      break;
++
++    case google::protobuf::Field::TYPE_INT32:
++    case google::protobuf::Field::TYPE_INT64:
++    case google::protobuf::Field::TYPE_UINT32:
++    case google::protobuf::Field::TYPE_UINT64:
++    case google::protobuf::Field::TYPE_SINT32:
++    case google::protobuf::Field::TYPE_SINT64:
++    case google::protobuf::Field::TYPE_SFIXED32:
++    case google::protobuf::Field::TYPE_SFIXED64:
++    case google::protobuf::Field::TYPE_FIXED32:
++    case google::protobuf::Field::TYPE_FIXED64:
++      ow->RenderInt32(key, 0);
++      break;
++
++    case google::protobuf::Field::TYPE_FLOAT:
++    case google::protobuf::Field::TYPE_DOUBLE:
++      ow->RenderFloat(key, 0.0f);
++      break;
++
++    case google::protobuf::Field::TYPE_STRING:
++      ow->RenderString(key, "");
++      break;
++
++    case google::protobuf::Field::TYPE_ENUM:
++      en = typeinfo_->GetEnumByTypeUrl(value_field->type_url());
++      if (en != nullptr) {
++        enum_value = FindEnumValueByNumber(*en, 0);
++        if (enum_value != nullptr) {
++          if (render_options_.use_ints_for_enums) {
++            ow->RenderInt32(key, 0);
++          } else if (render_options_.use_lower_camel_for_enums) {
++            ow->RenderString(key,
++              EnumValueNameToLowerCamelCase(enum_value->name()));
++          } else {
++            ow->RenderString(key, enum_value->name());
++          }
++        } else {
++          ow->RenderInt32(key, 0);
++        }
++      } else {
++        ow->RenderInt32(key, 0);
++      }
++      break;
++
++    default:
++      return util::InternalError("Invalid default map value type.");
++  }
++  return util::Status();
++}
++
+ util::Status ProtoStreamObjectSource::RenderPacked(
+     const google::protobuf::Field* field, ObjectWriter* ow) const {
+   uint32_t length;
+diff -ru protobuf-3.19.4-orig/src/google/protobuf/util/internal/protostream_objectsource.h protobuf-3.19.4/src/google/protobuf/util/internal/protostream_objectsource.h
+--- protobuf-3.19.4-orig/src/google/protobuf/util/internal/protostream_objectsource.h
++++ protobuf-3.19.4/src/google/protobuf/util/internal/protostream_objectsource.h
+@@ -193,6 +193,10 @@
+                                      StringPiece name, uint32_t list_tag,
+                                      ObjectWriter* ow) const;
+ 
++  util::Status RenderDefaultMapValue(const std::string& key,
++                                     const google::protobuf::Field* value_field,
++                                     ObjectWriter* ow) const;
++
+   // Renders a packed repeating field. A packed field is stored as:
+   // {tag length item1 item2 item3} instead of the less efficient
+   // {tag item1 tag item2 tag item3}.

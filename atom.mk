@@ -50,6 +50,7 @@ ifeq ("$(TARGET_OS_FLAVOUR)","android")
 LOCAL_AUTOTOOLS_PATCHES += 0001-android_avoid_so_version.patch
 endif
 LOCAL_AUTOTOOLS_PATCHES += 0003-disable-languages.patch
+LOCAL_AUTOTOOLS_PATCHES += 0004-fix-json-map-empty-entry.patch
 
 LOCAL_AUTOTOOLS_CONFIGURE_ARGS := \
 	--without-zlib \
