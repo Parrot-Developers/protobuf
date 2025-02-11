@@ -1,7 +1,7 @@
 
 LOCAL_PATH := $(call my-dir)
 
-PROTOBUF_VERSION := 3.19.4
+PROTOBUF_VERSION := 3.19.5
 
 ###############################################################################
 # Host part
